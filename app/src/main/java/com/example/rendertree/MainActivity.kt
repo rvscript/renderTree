@@ -3,12 +3,12 @@ package com.example.rendertree
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-
 
 class MainActivity : AppCompatActivity() {
     val parentWidth = 1000
@@ -19,24 +19,46 @@ class MainActivity : AppCompatActivity() {
         parentLayout = createLinearLayout(this, LinearLayout.VERTICAL, parentWidth, parentHeight)
         parentLayout.setBackgroundColor(Color.GRAY)
         parentLayout.gravity = Gravity.CENTER
-        val arr = intArrayOf(2,2,1,3)
-        parentLayout = renderLayout(arr, parentLayout)
-        setContentView(renderLayout(arr, parentLayout))
+        val arr = intArrayOf(2, 3, 5, 7, 9, 10, 11)
+        renderTree(arr, parentLayout)
+        parentLayout = renderTree(arr, parentLayout)
+        setContentView(renderTree(arr, parentLayout))
     }
 
-    private fun renderLayout(arr: IntArray, layout: LinearLayout): LinearLayout {
-        return if (arr.isEmpty()) {
-            layout
-        } else if (arr.size == 1) {
-            layout.addView(createChildView(parentWidth, parentHeight, Color.BLUE))
-            layout
+    private fun renderTree(array: IntArray, layout: LinearLayout): LinearLayout {
+        val mid = array.size / 2
+        val subArray1 = array.sliceArray(0 until mid)
+        val subArray2 = array.sliceArray(mid until array.size)
+
+        Log.d("TREE*", "renderTree: arr1 = ${subArray1.contentToString()}, arr2 = ${subArray2.contentToString()}")
+        if (subArray1.size > 2) {
+            renderTree(subArray1, layout)
         } else {
-            divideAndConquer(layout, arr)
+            if (subArray1.size == 1) {
+                val textView = createChildView(subArray1[0], subArray1[0], Color.BLUE)
+                layout.addView(textView)
+            } else {
+                val textView = createChildView(subArray1[0], subArray1[0], Color.BLUE)
+                layout.addView(textView)
+            }
         }
+
+        if (subArray2.size > 2) {
+            renderTree(subArray2, layout)
+        } else {
+            if (subArray2.size == 1) {
+                val textView = createChildView(subArray2[0], subArray2[0], Color.BLUE)
+                layout.addView(textView)
+            } else {
+                val textView = createChildView(subArray2[0], subArray2[0], Color.BLUE)
+                layout.addView(textView)
+            }
+        }
+        return layout
     }
 
     private fun divideAndConquer(parent: LinearLayout, arr: IntArray): LinearLayout {
-        val mid = arr.size/2
+        val mid = arr.size / 2
         val arrLeft = arr.sliceArray(0 until mid)
         val arrRight = arr.sliceArray(mid until arr.size)
         addUpLayout(arrLeft, parent, Color.RED)
@@ -46,18 +68,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun addUpLayout(arr: IntArray, parent: LinearLayout, color: Int) {
         if (arr.size == 1) {
-            val childWidth = (parentWidth/100)*(arr[0])
+            val childWidth = (parentWidth / 100) * (arr[0])
             val childHeight = parentHeight
-            parent.addView(createChildView(childWidth,childHeight, color))
+            parent.addView(createChildView(childWidth, childHeight, color))
         } else if (arr.size == 2) {
-            val childWidth = (parentWidth/100)*(arr[0]+ arr[1])
-            val childHeight = (parentWidth/100)*(arr[0]+arr[1])
-            parent.addView(createChildView(childWidth,childHeight, color))
+            val childWidth = (parentWidth / 100) * (arr[0] + arr[1])
+            val childHeight = (parentWidth / 100) * (arr[0] + arr[1])
+            parent.addView(createChildView(childWidth, childHeight, color))
         }
     }
 
     private fun createChildView(child1: Int, child2: Int, color: Int): TextView {
-        val textView  = createTextViewLayout(this, child1,child2)
+        val textView = createTextViewLayout(this, child1, child2)
         textView.setBackgroundColor(color)
         return textView
     }
@@ -88,7 +110,6 @@ class MainActivity : AppCompatActivity() {
             width,
             height
         )
-        textView.textSize = 22F
         return textView
     }
 
