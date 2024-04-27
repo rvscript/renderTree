@@ -10,4 +10,6 @@ This is to be drawn to display a grid of items with proportioned areas.
 My initial attempt was using a layout and populating with more linear layouts programatically. This did not seem to work.
 I tried to subdivide and create text views. This seems to be better and I will continue working on it. 
 
+I've moved to draw rectangles for image of rectangles. This is better than drawing text views. Drawing on a canvas separates the action from the activities layouts. 
+
 Thank you.
