@@ -10,32 +10,35 @@ import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     val parentWidth = 1000
     val parentHeight = 1000
+    val TAG = "TREE*"
+    var arrSum = 0
+    var count = 0
+
     lateinit var parentLayout: RelativeLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parentLayout = createRelativeLayout(this)
         parentLayout.setBackgroundColor(Color.LTGRAY)
         parentLayout.gravity = Gravity.CENTER
-        val arr = intArrayOf(2, 3, 5, 7, 9, 10, 11)
+        val arr = intArrayOf(10, 10, 9, 1,7,5,3,4)
+        arrSum = arr.sum()
+        Log.d(TAG, "init Array ${arr.contentToString()}, count = $count")
+
         // paint
         val paint = Paint()
+
         // canvas
         val bg = Bitmap.createBitmap(parentWidth, parentHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bg)
-        // init background for rectangles
-        paint.color = Color.parseColor("#000000");
-        canvas.drawRect(0F, 0F, 1000F, 1000F, paint)
 
         // function for drawing other squares
-        renderTree(arr, paint, canvas)
+        renderTree(arr, paint, canvas, 0F, 0F, 1000F, 1000F)
 
         // Image
         val imageView = ImageView(this)
@@ -44,49 +47,58 @@ class MainActivity : AppCompatActivity() {
         // activityLayout
         parentLayout.addView(imageView)
         setContentView(parentLayout)
-
     }
 
     // recursive function for drawing rectangles
-    private fun renderTree(array: IntArray, paint: Paint, canvas: Canvas) {
+    private fun renderTree(
+        array: IntArray,
+        paint: Paint,
+        canvas: Canvas,
+        left: Float = 0F,
+        top: Float = 0F,
+        right: Float = 0F,
+        bottom: Float = 0F
+    ) {
+        count++
+        val perc = (array.sum().toDouble())/arrSum.toDouble()
         val mid = array.size / 2
         val subArray1 = array.sliceArray(0 until mid)
         val subArray2 = array.sliceArray(mid until array.size)
 
+        val subArray1Sum = subArray1.sum()
+        val subArray2Sum = subArray2.sum()
+
+        val subArray1perc = (subArray1Sum.toDouble()/array.sum().toDouble()).toFloat()
+        val subArray2perc = (subArray2Sum.toDouble()/array.sum().toDouble()).toFloat()
+        val canvasWidth = right - left
+        val canvasHeight = bottom - top
+
         Log.d(
-            "TREE*",
-            "renderTree: arr1 = ${subArray1.contentToString()}, arr2 = ${subArray2.contentToString()}"
+            TAG,
+            "renderTree: arr1 = ${subArray1.contentToString()}, arr2 = ${subArray2.contentToString()}, count = $count"
         )
-        if (subArray1.size > 2) {
-            renderTree(subArray1, paint, canvas)
+
+        if (subArray1.size > 1) {
+            renderTree(subArray1, paint, canvas, left, top, right, bottom)
         } else {
-            if (subArray1.size == 1) {
+            if (subArray1.isNotEmpty()) {
                 paint.color = Color.parseColor("#008899");
-                canvas.drawRect(210F, 80F, 360F, 200F, paint)
-
-            } else {
-                paint.color = Color.parseColor("#CD5C5C")
-                canvas.drawRect(0F, 0F, 50F, 50F, paint)
-
+                canvas.drawRect(left, top, right*subArray1perc, bottom, paint)
             }
         }
 
-        if (subArray2.size > 2) {
-            renderTree(subArray2, paint, canvas)
+        if (subArray2.size > 1) {
+            renderTree(subArray2, paint, canvas, right*subArray1perc, top, right, bottom)
         } else {
-            if (subArray2.size == 1) {
-                paint.color = Color.parseColor("#008899");
-                canvas.drawRect(210F, 80F, 360F, 200F, paint)
-
-            } else {
-                paint.color = Color.parseColor("#CD5C5C")
-                canvas.drawRect(0F, 0F, 50F, 50F, paint)
+            if (subArray2.isNotEmpty()) {
+                paint.color = Color.parseColor("#CD5C5C");
+                canvas.drawRect(right*subArray1perc, top, right, bottom, paint)
             }
         }
     }
 
     // create initial layout
-    fun createRelativeLayout(
+    private fun createRelativeLayout (
         context: Context,
         width: Int = ViewGroup.LayoutParams.MATCH_PARENT,
         height: Int = ViewGroup.LayoutParams.MATCH_PARENT
