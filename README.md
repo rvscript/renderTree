@@ -12,4 +12,7 @@ I tried to subdivide and create text views. This seems to be better and I will c
 
 I've moved to draw rectangles for image of rectangles. This is better than drawing text views. Drawing on a canvas separates the action from the activities layouts. 
 
+-- 
+Created a branch attempt2. This attempt separates the rectangles vertically. It seems to work for an array of up to size 4. Added a hex changer to display the different rectangles being drawn by iteration count. 
+
 Thank you.

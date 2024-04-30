@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         parentLayout = createRelativeLayout(this)
         parentLayout.setBackgroundColor(Color.LTGRAY)
         parentLayout.gravity = Gravity.CENTER
-        val arr = intArrayOf(10, 10, 9, 1,7,5,3,4)
+        val arr = intArrayOf(10, 5, 20,2)
         arrSum = arr.sum()
         Log.d(TAG, "init Array ${arr.contentToString()}, count = $count")
 
@@ -79,19 +79,26 @@ class MainActivity : AppCompatActivity() {
         )
 
         if (subArray1.size > 1) {
-            renderTree(subArray1, paint, canvas, left, top, right, bottom)
+            Log.d(TAG, "renderTree: subArray1 renderTree(${subArray1.contentToString()})")
+            renderTree(subArray1, paint, canvas, left*subArray1perc, top, right*subArray1perc, bottom)
         } else {
             if (subArray1.isNotEmpty()) {
-                paint.color = Color.parseColor("#008899");
+                val hex = Integer.toHexString(count*25 + 2813300)
+                Log.d(TAG, "subArray1 draw: ${subArray1.contentToString()}")
+                paint.color = Color.parseColor("#$hex");
                 canvas.drawRect(left, top, right*subArray1perc, bottom, paint)
             }
         }
 
         if (subArray2.size > 1) {
+            Log.d(TAG, "renderTree: subArray2 renderTree(${subArray2.contentToString()})")
             renderTree(subArray2, paint, canvas, right*subArray1perc, top, right, bottom)
         } else {
             if (subArray2.isNotEmpty()) {
-                paint.color = Color.parseColor("#CD5C5C");
+                val hex = Integer.toHexString(count*25 - 1677216)
+                Log.d(TAG, "subArray1 draw: ${subArray1.contentToString()}")
+                Log.d(TAG, "subArray2 draw: ${subArray2.contentToString()}")
+                paint.color = Color.parseColor("#$hex");
                 canvas.drawRect(right*subArray1perc, top, right, bottom, paint)
             }
         }
